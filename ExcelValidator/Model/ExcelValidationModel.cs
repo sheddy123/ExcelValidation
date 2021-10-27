@@ -12,13 +12,13 @@ namespace ExcelValidator.Model
 
             public int Column { get; }
 
-            public string Comment { get; }
+            public string Comment { get; set; }
 
             public string  ErrorComment { get; set; }
 
-            public byte[] ExcelFile { get; }
+            public byte[] ExcelFile { get; set; }
 
-            public List<object> HeaderColumns { get; }
+            public List<object> HeaderColumns { get; set; }
 
         }
         

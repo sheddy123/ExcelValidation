@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,9 +55,17 @@ namespace ExcelValidator.Model
         /// <returns></returns>
         private static ExcelPackage ByteArrayToObject(byte[] arrBytes)
         {
-            using (MemoryStream memStream = new MemoryStream(arrBytes))
-                return new ExcelPackage(memStream);
-
+            try
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using (MemoryStream memStream = new MemoryStream(arrBytes))
+                    return new ExcelPackage(memStream);
+            }
+            catch(Exception ex)
+            {
+                
+            }
+            return null;
         }
         //{
         //    ExcelPackage package = new ExcelPackage(memStream);
