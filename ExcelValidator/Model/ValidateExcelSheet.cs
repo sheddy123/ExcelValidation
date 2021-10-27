@@ -11,7 +11,11 @@ namespace ExcelValidator.Model
 {
     public partial class ValidateExcelSheet : IExcelValidator
     {
-        private ExcelValidationModel _excelFile { get;  }
+        private ExcelValidationModel _excelFile { get; }
+
+        public ExcelValidationModel IsValidFile {
+            get => _excelFile;
+        }
         /// <summary>
         /// Takes an instance of an excel file and validates all the fields
         /// </summary>
@@ -29,7 +33,7 @@ namespace ExcelValidator.Model
             //var rowsValid
             
             
-            return new ExcelValidationModel { ErrorComment = CustomErrors.InvalidRows };
+            return new ExcelValidationModel { Comment = CustomErrors.ValidRows };
         }
 
      

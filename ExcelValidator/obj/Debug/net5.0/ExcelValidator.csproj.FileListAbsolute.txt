@@ -1,0 +1,12 @@
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\bin\Debug\net5.0\ExcelValidator.deps.json
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\bin\Debug\net5.0\ExcelValidator.dll
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\bin\Debug\net5.0\ref\ExcelValidator.dll
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\bin\Debug\net5.0\ExcelValidator.pdb
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.csproj.AssemblyReference.cache
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.AssemblyInfoInputs.cache
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.AssemblyInfo.cs
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.csproj.CoreCompileInputs.cache
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.dll
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ref\ExcelValidator.dll
+C:\Users\iodom\source\repos\ExcelValidation\ExcelValidator\obj\Debug\net5.0\ExcelValidator.pdb
