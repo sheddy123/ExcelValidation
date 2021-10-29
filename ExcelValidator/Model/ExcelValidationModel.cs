@@ -8,9 +8,21 @@ namespace ExcelValidator.Model
         {
             public string ColumnName { get; }
 
-            public int Row { get; }
+            private List<HashSet<string>> _addRowEntriesList = new List<HashSet<string>>();
 
-            public int Column { get; }
+            public List<HashSet<string>> AddRowEntriesList
+            {
+                get => _addRowEntriesList;
+                set
+                {
+                    _addRowEntriesList = value;
+                }
+            }
+
+
+            public int Row { get; set; }
+
+            public int Column { get; set; }
 
             public string Comment { get; set; }
 
@@ -41,14 +53,17 @@ namespace ExcelValidator.Model
                     _isValidColumn = value;
 
                     if (!_isValidColumn)
-                        _errorComment =  CustomErrors.InvalidColumns;
+                        _errorComment = CustomErrors.InvalidColumns;
                 }
             }
+
+            public int EndRow { get; set; }
+            public int EndColumn { get; set; }
 
             public string ErrorComment
             {
                 get => _errorComment;
-                set => _errorComment = value;
+                set => _errorComment += _errorComment;
             }
 
             public byte[] ExcelFile { get; set; }
