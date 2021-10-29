@@ -35,12 +35,10 @@ namespace ExcelValidator.Model
             //Validates the column(s)
             excelFile.ColumnIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
             //Validates the row(s)
-            excelFile.RowIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
+            excelFile.RowIsValid = ValidationMethods.ValidateExcelRows(excelFile);
 
             if (!String.IsNullOrEmpty(excelFile.ErrorComment))
                 return new ExcelValidationModel { ErrorComment = excelFile.ErrorComment, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
-
-
 
             return new ExcelValidationModel { Comment = CustomErrors.ValidRows + CustomErrors.ValidColumns, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
         }
