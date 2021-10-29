@@ -16,7 +16,8 @@ namespace ExcelValidationTests
         public void Test1(ExcelValidationModel stubData)
         {
             var validator = new ValidateExcelSheet(stubData);
-            Assert.Equal("The header rows are valid", validator.IsValidFile.Comment);
+            Assert.True(validator.IsValidFile.RowIsValid);
+            Assert.True(validator.IsValidFile.ColumnIsValid);
         }
     }
 }
