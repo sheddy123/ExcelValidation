@@ -86,7 +86,7 @@ namespace ExcelValidator.Model
         /// <param name="excelFileByte"></param>
         /// <param name="headers"></param>
         /// <returns></returns>
-        public static bool ValidateExcelHeader(ExcelValidationModel excelSheet)
+        public static bool ValidateExcelColumns(ExcelValidationModel excelSheet)
         {
             HashSet<object> headerEntries = new HashSet<object>(excelSheet.HeaderColumns);
             var excelFile2 = ByteArrayToObject(excelSheet.ExcelFile);

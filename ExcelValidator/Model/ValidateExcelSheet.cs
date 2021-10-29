@@ -13,7 +13,8 @@ namespace ExcelValidator.Model
     {
         private ExcelValidationModel _excelFile { get; }
 
-        public ExcelValidationModel IsValidFile {
+        public ExcelValidationModel IsValidFile
+        {
             get => _excelFile;
         }
         /// <summary>
@@ -22,20 +23,28 @@ namespace ExcelValidator.Model
         /// <param name="ExcelSheet"></param>
         /// <param name=""></param>
         public ValidateExcelSheet(ExcelValidationModel excelFile) => _excelFile = ValidateExcel(excelFile);
-        
 
+
+        /// <summary>
+        /// Takes in ExcelValidationModel that validates rows and columns
+        /// </summary>
+        /// <param name="excelFile"></param>
+        /// <returns></returns>
         public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
         {
-            var headerIsValid = ValidationMethods.ValidateExcelHeader(excelFile);
-            if (!headerIsValid)
-                return new ExcelValidationModel { ErrorComment = CustomErrors.InvalidRows };
+            //Validates the column(s)
+            excelFile.ColumnIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
+            //Validates the row(s)
+            excelFile.RowIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
 
-            //var rowsValid
-            
-            
-            return new ExcelValidationModel { Comment = CustomErrors.ValidRows };
+            if (!String.IsNullOrEmpty(excelFile.ErrorComment))
+                return new ExcelValidationModel { ErrorComment = excelFile.ErrorComment, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
+
+
+
+            return new ExcelValidationModel { Comment = CustomErrors.ValidRows + CustomErrors.ValidColumns, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
         }
 
-     
+
     }
 }
