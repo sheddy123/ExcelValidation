@@ -68,7 +68,19 @@ namespace ExcelValidator.Model
 
             public byte[] ExcelFile { get; set; }
 
-            public List<object> HeaderColumns { get; set; }
+            private List<string> _headerColumns;
+            public List<string> HeaderColumns
+            {
+                get => _headerColumns;
+                set
+                {
+                    _headerColumns = value;
+                    _headerColumns = _headerColumns.ConvertAll(x => x.ToLowerInvariant());
+                }
+            }
+
+            private string _mismatchedRows;
+            public string MismatchedColumns { get => _mismatchedRows; set { _mismatchedRows = value; } }
         }
     }
 }

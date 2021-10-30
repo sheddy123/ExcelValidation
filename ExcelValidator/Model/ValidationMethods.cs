@@ -15,12 +15,12 @@ namespace ExcelValidator.Model
         /// <param name="cell"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        private static bool SetError(ExcelRange cell, ExcelValidationModel model)
+        private static bool SetError(ExcelRange cell, ExcelValidationModel model, string errorComment)
         {
             var fill = cell[model.Row, model.Column].Style.Fill;
             fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
-            cell.AddComment(model.ErrorComment, " !!");
+            cell.AddComment(errorComment, " !!");
 
             return false;
         }
@@ -40,16 +40,12 @@ namespace ExcelValidator.Model
             {
                 //check if cell value has a value
                 if (string.IsNullOrWhiteSpace(cell.Value.ToString()))
-                {
-                    result = SetError(cell, model);
-                    model.ErrorComment = errorComment;
-                }
+                    result = SetError(cell, model, errorComment);
+                
             }
             else
-            {
-                result = SetError(cell, model);
-                model.ErrorComment = errorComment;
-            }
+                result = SetError(cell, model, errorComment);
+            
 
 
             return result;
@@ -85,7 +81,7 @@ namespace ExcelValidator.Model
             HashSet<string> columnNames = new HashSet<string>();
 
             foreach (var firstRowCell in sheet.Cells[sheet.Dimension.Start.Row, sheet.Dimension.Start.Column, 1, sheet.Dimension.End.Column])
-                columnNames.Add(firstRowCell.Text);
+                columnNames.Add(firstRowCell.Text.ToLower());
             return columnNames;
         }
 
@@ -135,9 +131,13 @@ namespace ExcelValidator.Model
         /// <returns></returns>
         public static bool ValidateExcelColumns(ExcelValidationModel excelSheet)
         {
-            HashSet<object> headerEntries = new HashSet<object>(excelSheet.HeaderColumns);
+            HashSet<string> headerEntries = new HashSet<string>(excelSheet.HeaderColumns);
             var excelFile2 = ByteArrayToObject(excelSheet.ExcelFile);
             var listColumnHeaders = excelFile2.Workbook.Worksheets[0].GetHeaderColumns();
+            
+            headerEntries.SymmetricExceptWith(listColumnHeaders);
+
+            excelSheet.MismatchedColumns = string.Join(",", headerEntries.OrderBy(key => key).ToList());
 
             return headerEntries.SetEquals(listColumnHeaders);
         }

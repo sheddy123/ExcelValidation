@@ -38,7 +38,8 @@ namespace ExcelValidator.Model
             excelFile.RowIsValid = ValidationMethods.ValidateExcelRows(excelFile);
 
             if (!String.IsNullOrEmpty(excelFile.ErrorComment))
-                return new ExcelValidationModel { ErrorComment = excelFile.ErrorComment, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
+                return excelFile;
+                //return new ExcelValidationModel { ErrorComment = excelFile.ErrorComment, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
 
             return new ExcelValidationModel { Comment = CustomErrors.ValidRows + CustomErrors.ValidColumns, ColumnIsValid = excelFile.ColumnIsValid, RowIsValid = excelFile.RowIsValid };
         }
