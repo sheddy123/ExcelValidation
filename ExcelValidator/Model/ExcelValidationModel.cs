@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OfficeOpenXml;
+using System.Collections.Generic;
 
 namespace ExcelValidator.Model
 {
@@ -7,7 +8,7 @@ namespace ExcelValidator.Model
         public class ExcelValidationModel
         {
             public string ColumnName { get; }
-
+            public ExcelWorksheet UpdatedSheet { get; set; }
             private List<HashSet<string>> _addRowEntriesList = new List<HashSet<string>>();
 
             public List<HashSet<string>> AddRowEntriesList
@@ -38,10 +39,6 @@ namespace ExcelValidator.Model
                 set
                 {
                     _isValidRow = value;
-
-                    if (!_isValidRow)
-                        _errorComment = _errorComment + " and " + CustomErrors.InvalidRows;
-
                 }
             }
 
@@ -51,9 +48,6 @@ namespace ExcelValidator.Model
                 set
                 {
                     _isValidColumn = value;
-
-                    if (!_isValidColumn)
-                        _errorComment = CustomErrors.InvalidColumns;
                 }
             }
 
@@ -63,7 +57,9 @@ namespace ExcelValidator.Model
             public string ErrorComment
             {
                 get => _errorComment;
-                set => _errorComment += _errorComment;
+                set {
+                    _errorComment = value;
+                }
             }
 
             public byte[] ExcelFile { get; set; }
