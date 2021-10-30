@@ -9,6 +9,7 @@ namespace ExcelValidator.Model
 {
     public static class ValidationMethods
     {
+
         /// <summary>
         /// Displays an error for an invalid cell 
         /// </summary>
@@ -34,19 +35,17 @@ namespace ExcelValidator.Model
         private static bool ValidateText(ExcelRange cell, ExcelValidationModel model)
         {
             bool result = true;
-            var errorComment = string.Format("\n\n\n {0} is empty", cell[1, model.Column].Value.ToString());
+            var errorComment = string.Format("\n\n\n {0} is empty", cell[1, model.Column].Value?.ToString());
 
             if (cell[model.Row, model.Column].Value != null)
             {
                 //check if cell value has a value
                 if (string.IsNullOrWhiteSpace(cell.Value.ToString()))
                     result = SetError(cell, model, errorComment);
-                
+
             }
             else
                 result = SetError(cell, model, errorComment);
-            
-
 
             return result;
         }
@@ -76,12 +75,27 @@ namespace ExcelValidator.Model
         /// </summary>
         /// <param name="sheet"></param>
         /// <returns></returns>
-        private static HashSet<string> GetHeaderColumns(this ExcelWorksheet sheet)
+        private static HashSet<string> GetHeaderColumns(this ExcelWorksheet sheet, ExcelValidationModel excelSheet)
         {
             HashSet<string> columnNames = new HashSet<string>();
-
+            excelSheet.Column = 1;
+            excelSheet.Row = 1;
+            excelSheet.ColumnIsValid = true;
             foreach (var firstRowCell in sheet.Cells[sheet.Dimension.Start.Row, sheet.Dimension.Start.Column, 1, sheet.Dimension.End.Column])
-                columnNames.Add(firstRowCell.Text.ToLower());
+            {
+                var result = ValidateText(sheet.Cells, excelSheet);
+                if (!result)
+                {
+                    excelSheet.ColumnIsValid = false;
+                    excelSheet.ErrorComment = $"{CustomErrors.InvalidColumns} at {firstRowCell.Address}";
+                }
+                else
+                    columnNames.Add(firstRowCell.Text.ToLower());
+
+                excelSheet.Column++;
+            }
+            excelSheet.UpdatedSheet = sheet;
+
             return columnNames;
         }
 
@@ -90,36 +104,44 @@ namespace ExcelValidator.Model
         /// </summary>
         /// <param name="sheet"></param>
         /// <returns></returns>
-        private static ExcelValidationModel GetHeaderRows(this ExcelWorksheet sheet)
+        private static ExcelValidationModel GetHeaderRows(this ExcelWorksheet sheet, ExcelValidationModel excelSheet)
         {
             List<HashSet<string>> rowEntriesList = new List<HashSet<string>>();
             HashSet<string> rowEntries = new HashSet<string>();
-            ExcelValidationModel model = new ExcelValidationModel();
-            model.Row = sheet.Dimension.Start.Row + 1;
-            model.EndRow = sheet.Dimension.End.Row;
-            model.Column = sheet.Dimension.Start.Column;
-            model.EndColumn = sheet.Dimension.End.Column;
-
-            while (model.Row <= model.EndRow)
+            excelSheet.Row = sheet.Dimension.Start.Row + 1;
+            excelSheet.EndRow = sheet.Dimension.End.Row;
+            excelSheet.Column = sheet.Dimension.Start.Column;
+            excelSheet.EndColumn = sheet.Dimension.End.Column;
+            excelSheet.RowIsValid = true;
+            while (excelSheet.Row <= excelSheet.EndRow)
             {
 
-                if (model.Column > model.EndColumn)
+                if (excelSheet.Column > excelSheet.EndColumn)
                 {
-                    model.AddRowEntriesList.Add(rowEntries);
+                    excelSheet.AddRowEntriesList.Add(rowEntries);
                     rowEntries = new HashSet<string>();
-                    model.Row++;
-                    model.Column = sheet.Dimension.Start.Column;
+                    excelSheet.Row++;
+                    excelSheet.Column = sheet.Dimension.Start.Column;
                 }
 
-                if (model.Row > model.EndRow)
+                if (excelSheet.Row > excelSheet.EndRow)
                     break;
 
-                ValidateText(sheet.Cells, model);
-                rowEntries.Add(sheet.Cells[model.Row, model.Column].Value.ToString());
-                model.Column++;
-            }
+                var result = ValidateText(sheet.Cells, excelSheet);
 
-            return model;
+                if (!result)
+                {
+                    excelSheet.RowIsValid = false;
+                    excelSheet.ErrorComment = $"{CustomErrors.InvalidRows} at row {excelSheet.Row} column {excelSheet.Column} or Address: {sheet.Cells.Address}\n\n";
+                }
+                else
+                    rowEntries.Add(sheet.Cells[excelSheet.Row, excelSheet.Column].Value.ToString());
+
+                excelSheet.Column++;
+            }
+            excelSheet.UpdatedSheet = sheet;
+
+            return excelSheet;
         }
 
 
@@ -133,13 +155,14 @@ namespace ExcelValidator.Model
         {
             HashSet<string> headerEntries = new HashSet<string>(excelSheet.HeaderColumns);
             var excelFile2 = ByteArrayToObject(excelSheet.ExcelFile);
-            var listColumnHeaders = excelFile2.Workbook.Worksheets[0].GetHeaderColumns();
-            
+            var listColumnHeaders = excelFile2.Workbook.Worksheets[0].GetHeaderColumns(excelSheet);
+
             headerEntries.SymmetricExceptWith(listColumnHeaders);
 
             excelSheet.MismatchedColumns = string.Join(",", headerEntries.OrderBy(key => key).ToList());
+            excelSheet.AddRowEntriesList.Add(listColumnHeaders);
 
-            return headerEntries.SetEquals(listColumnHeaders);
+            return excelSheet.ColumnIsValid;
         }
 
         /// <summary>
@@ -149,14 +172,14 @@ namespace ExcelValidator.Model
         /// <returns></returns>
         public static bool ValidateExcelRows(ExcelValidationModel excelSheet)
         {
-            var excelFile2 = ByteArrayToObject(excelSheet.ExcelFile);
+            
 
-            if (excelFile2.Workbook.Worksheets[0].Dimension.Rows <= 1)
+            if (excelSheet.UpdatedSheet.Workbook.Worksheets[0].Dimension.Rows <= 1)
                 return true;
+            
+            excelSheet.UpdatedSheet.Workbook.Worksheets[0].GetHeaderRows(excelSheet);
 
-            var listColumnHeaders = excelFile2.Workbook.Worksheets[0].GetHeaderRows();
-
-            return true;
+            return excelSheet.RowIsValid;
         }
     }
 }

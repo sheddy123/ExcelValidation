@@ -25,7 +25,7 @@ namespace ExcelValidationTests.Methods
         public IEnumerator<object[]> GetEnumerator()
         {
             yield return new object[] {
-                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "IDs","Usernames","Email" } }
+                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "ID","Username","Email" } }
             };
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
