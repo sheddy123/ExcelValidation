@@ -1,4 +1,12 @@
-﻿namespace ExcelValidator.Model
+﻿/*==============================================*\
+|    Created By                                   |
+|     Odom Ifeanyi Shadrach v1.0                  |
+|            11/11/2021                           |
+|                                                 |
+|                                                 |
+/================================================*/
+
+namespace ExcelValidator.Model
 {
     public partial class ValidateExcelSheet
     {

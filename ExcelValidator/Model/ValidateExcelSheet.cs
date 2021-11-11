@@ -1,4 +1,11 @@
-﻿using ExcelValidator.Interfaces;
+﻿/*==============================================*\
+|    Created By                                   |
+|     Odom Ifeanyi Shadrach v1.0                  |
+|            11/11/2021                           |
+|                                                 |
+|                                                 |
+/================================================*/
+using ExcelValidator.Interfaces;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -11,20 +18,27 @@ namespace ExcelValidator.Model
 {
     public partial class ValidateExcelSheet : IExcelValidator
     {
+        #region private property field excelFile used for modifications of data
         private ExcelValidationModel _excelFile { get; }
+        #endregion
 
+        #region Property to set the condition of the file from true or false
         public ExcelValidationModel IsValidFile
         {
             get => _excelFile;
         }
+        #endregion
+
+        #region Constructor that takes in the excel file model [ExcelValidationModel]
         /// <summary>
         /// Takes an instance of an excel file and validates all the fields
         /// </summary>
         /// <param name="ExcelSheet"></param>
         /// <param name=""></param>
         public ValidateExcelSheet(ExcelValidationModel excelFile) => _excelFile = ValidateExcel(excelFile);
+        #endregion
 
-
+        #region Method for Validating Excel Sheet
         /// <summary>
         /// Takes in ExcelValidationModel that validates rows and columns
         /// </summary>
@@ -40,7 +54,7 @@ namespace ExcelValidator.Model
 
             return excelFile;
         }
-
+        #endregion
 
     }
 }
