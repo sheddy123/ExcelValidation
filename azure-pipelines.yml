@@ -6,8 +6,7 @@
 trigger:
 - main
 
-- name: GitHub Issues to Azure DevOps
-  uses: danhellem/github-actions-issue-to-work-item@1.9
+
 
 pool:
   vmImage: 'windows-latest'
@@ -35,3 +34,6 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    
+- name: GitHub Issues to Azure DevOps
+  uses: danhellem/github-actions-issue-to-work-item@1.9
