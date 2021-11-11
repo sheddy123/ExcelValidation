@@ -35,5 +35,5 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
-- name: GitHub Issues to Azure DevOps
-  uses: danhellem/github-actions-issue-to-work-item@1.9
+#- name: GitHub Issues to Azure DevOps
+  #uses: danhellem/github-actions-issue-to-work-item@1.9
