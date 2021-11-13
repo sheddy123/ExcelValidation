@@ -5,6 +5,7 @@
 |                                                 |
 |                                                 |
 /================================================*/
+using ExcelValidator.Model;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections;
@@ -28,12 +29,26 @@ namespace ExcelValidationTests.Methods
 
             return fileByte;
         }
-
+        private Dictionary<string, DataValidationModel> DataValidationStub()
+        {
+            
+            Dictionary<string, DataValidationModel> stub = new Dictionary<string, DataValidationModel>();
+            stub.Add("ID", new DataValidationModel() { DataType = "int32", InputType = "Text" } );
+            stub.Add("Username", new DataValidationModel() { DataType = "string", InputType = "Text" });
+            stub.Add("Email", new DataValidationModel() { DataType = "string", InputType = "Email" });
+            
+            return stub;
+        }
         public IEnumerator<object[]> GetEnumerator()
         {
             yield return new object[] {
-                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "ID","Username","Email" } }
+                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "ID","Username","Email" },ValidationType = CustomNames.NormalVal }
             };
+            #region PR#7 Data Validation of Excel Rows and Columns
+            yield return new object[] {
+                new ExcelValidationModel { ExcelFile = ReturnFile(), DataValidation = DataValidationStub(), ValidationType = CustomNames.Data_Validation }
+            };
+            #endregion
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
