@@ -46,13 +46,30 @@ namespace ExcelValidator.Model
         /// <returns></returns>
         public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
         {
-            //Validates the column(s)
-            excelFile.ColumnIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
+            try
+            {
+                switch (excelFile.ValidationType)
+                {
+                    case CustomNames.NormalVal:
+                        //Validates the column(s)
+                        excelFile.ColumnIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
+                        //Validates the row(s)
+                        excelFile.RowIsValid = ValidationMethods.ValidateExcelRows(excelFile); break;
 
-            //Validates the row(s)
-            excelFile.RowIsValid = ValidationMethods.ValidateExcelRows(excelFile);
-
-            return excelFile;
+                    case CustomNames.Data_Validation:
+                        excelFile.DataValidation = (Dictionary<string, DataValidationModel>)excelFile.DataValidation;
+                        //Validates the column(s)
+                        excelFile.ColumnIsValid = ValidationMethods.DataValidateExcelColumns(excelFile);
+                        //Validates the row(s)
+                        excelFile.RowIsValid = ValidationMethods.DataTypeValidateExcelRows(excelFile); break;
+                    default: break;
+                }
+                return excelFile;
+            }
+            catch (Exception ex)
+            {
+                return new ExcelValidationModel { ErrorComment = ex.Message };
+            }
         }
         #endregion
 

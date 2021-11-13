@@ -14,6 +14,8 @@ using Microsoft.Extensions.FileProviders;
 using ExcelValidator.Model;
 using static ExcelValidator.Model.ValidateExcelSheet;
 using OfficeOpenXml;
+using System.ComponentModel;
+using System.Linq;
 
 namespace ExcelValidationTests
 {
@@ -23,6 +25,20 @@ namespace ExcelValidationTests
         [ClassData(typeof(StubData))]
         public void Test1(ExcelValidationModel stubData)
         {
+            //if (stubData.DataValidation != null)
+            //{
+            //    var key = stubData.DataValidation.Keys.Take(1).First();
+                
+            //    var key2 = stubData.DataValidation.Keys.Skip(0).Take(1);
+            //    var type = Type.GetType("System.Double");
+            //    var dat = Type.GetType("System.DateTime");
+
+            //    var dd = Convert.ChangeType("34", type);
+            //    var isValid1 = TypeDescriptor.GetConverter(type).IsValid("34");
+            //    var isValid2 = TypeDescriptor.GetConverter(dat).IsValid("34");
+            //    var dde = Convert.ChangeType("34", dat) ?? null;
+            //    var dhh = type.Name;
+            //}
             var validator = new ValidateExcelSheet(stubData);
             //var stream = new System.IO.MemoryStream();
             //using (var pck = new ExcelPackage(stream))

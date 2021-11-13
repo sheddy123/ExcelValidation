@@ -19,6 +19,12 @@ namespace ExcelValidator.Model
             
         }
         
+        public class CustomNames
+        {
+            public const string NormalVal = "Normal";
+            public const string Data_Validation = "Data Validation";
+          
+        }
 
     }
 }
