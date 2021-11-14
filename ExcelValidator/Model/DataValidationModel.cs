@@ -44,7 +44,7 @@ namespace ExcelValidator.Model
             {
                 _currentValue = value;
                 var type = Type.GetType($"System.{_dataType}");
-                _typeIsValid = ((_currentValue == null) || (type == null)) ? false : TypeDescriptor.GetConverter(type).IsValid(_currentValue);
+                _typeIsValid = ((String.IsNullOrEmpty(_currentValue) || (type == null)) ? false : TypeDescriptor.GetConverter(type).IsValid(_currentValue));
             }
         }
         #endregion

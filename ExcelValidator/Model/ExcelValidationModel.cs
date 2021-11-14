@@ -71,7 +71,8 @@ namespace ExcelValidator.Model
                 get => _errorComment;
                 set
                 {
-                    _errorComment = value;
+                    _errorComment += value;
+                    
                 }
             }
 

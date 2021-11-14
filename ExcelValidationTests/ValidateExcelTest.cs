@@ -49,7 +49,7 @@ namespace ExcelValidationTests
             //    FileInfo fi = new FileInfo(fullPath);
             //    pck.SaveAs(fi);
             //}
-            Assert.True(validator.IsValidFile.RowIsValid);
+            Assert.False(validator.IsValidFile.RowIsValid);
             Assert.True(validator.IsValidFile.ColumnIsValid);
         }
     }
