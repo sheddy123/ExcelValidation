@@ -46,7 +46,7 @@ namespace ExcelValidator.Model
         private static bool ValidateText(ExcelRange cell, ExcelValidationModel model, int method)
         {
             bool result = true;
-            var errorComment = string.Format("\n\n\n {0} is empty", cell[1, model.Column].Value?.ToString());
+            var errorComment = string.Format("\n\n\n {0} is invalid", cell[1, model.Column].Value?.ToString());
             switch (method)
             {
                 case 1:
@@ -61,9 +61,7 @@ namespace ExcelValidator.Model
                         result = SetError(cell, model, errorComment);
                     break;
                 case 2:
-                    if (model.ValidationModel.TypeIsValid)
-                    { }
-                    else
+                    if (!model.ValidationModel.TypeIsValid)
                         result = SetError(cell, model, errorComment);
                     break;
                 default: break;
@@ -159,7 +157,7 @@ namespace ExcelValidator.Model
                 if (!result)
                 {
                     excelSheet.RowIsValid = false;
-                    excelSheet.ErrorComment = $"{CustomErrors.InvalidRows} at row {excelSheet.Row} column {excelSheet.Column} or Address: {sheet.Cells.Address}\n\n";
+                    excelSheet.ErrorComment = $"{CustomErrors.InvalidRows} at row [{excelSheet.Row}] column [{excelSheet.Column}] or Address: {sheet.Cells.Address}\n\n";
                 }
                 else
                     rowEntries.Add(sheet.Cells[excelSheet.Row, excelSheet.Column].Value.ToString());
@@ -303,12 +301,12 @@ namespace ExcelValidator.Model
                 excelSheet.ValidationModel = excelSheet.DataValidation[dataColumnKey];
                 excelSheet.ValidationModel.CurrentValue = Convert.ToString(sheet.Cells[excelSheet.Row, excelSheet.Column].Value);
 
-                var result = (!excelSheet.ValidationModel.TypeIsValid) ? ValidateText(sheet.Cells, excelSheet,2) : true;
+                var result =  ValidateText(sheet.Cells, excelSheet,2);
 
                 if (!result)
                 {
                     excelSheet.RowIsValid = false;
-                    excelSheet.ErrorComment = $"{CustomErrors.InvalidRows} at row {excelSheet.Row} column {excelSheet.Column} or Address: {sheet.Cells.Address}\n\n";
+                    excelSheet.ErrorComment = $"{CustomErrors.InvalidRows} at row [{excelSheet.Row}] column [{excelSheet.Column}] or Address: [{sheet.Cells.Address}]\n\n";
                 }
                 else
                     rowEntries.Add(sheet.Cells[excelSheet.Row, excelSheet.Column].Value?.ToString());
