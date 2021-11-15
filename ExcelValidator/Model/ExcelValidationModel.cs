@@ -123,7 +123,7 @@ namespace ExcelValidator.Model
 
                 }
             }
-
+            public string ColumnValidation { get; set; }
             #endregion
         }
     }

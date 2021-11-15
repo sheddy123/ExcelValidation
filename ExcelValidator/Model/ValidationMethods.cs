@@ -46,11 +46,21 @@ namespace ExcelValidator.Model
         private static bool ValidateText(ExcelRange cell, ExcelValidationModel model, int method)
         {
             bool result = true;
-            var errorComment = string.Format("\n\n\n {0} is invalid", cell[1, model.Column].Value?.ToString());
+            string comment = String.Empty;
+            var errorComment = string.Format("\n\n\n {0} is empty", cell[1, model.Column].Value?.ToString());
             switch (method)
             {
                 case 1:
-                    if (cell[model.Row, model.Column].Value != null)
+                    if (model.ValidationModel != null && model.ColumnValidation == "Column_Validation")
+                    {
+                        if (!model.ValidationModel.IsValid)
+                        {
+                            comment = string.Format("Data Type [{0}] is invalid for column [{1}]", model.ValidationModel.DataType?.ToString(), cell.Address);
+                            comment = string.IsNullOrWhiteSpace(cell.Value.ToString()) ? errorComment + comment : comment;
+                            result = SetError(cell, model, comment);
+                        }
+                    }
+                    else if (cell[model.Row, model.Column].Value != null)
                     {
                         //check if cell value has a value
                         if (string.IsNullOrWhiteSpace(cell.Value.ToString()))
@@ -61,12 +71,22 @@ namespace ExcelValidator.Model
                         result = SetError(cell, model, errorComment);
                     break;
                 case 2:
-                    if (!model.ValidationModel.TypeIsValid)
-                        result = SetError(cell, model, errorComment);
-                    break;
+                    comment = string.Format("[{0}] is invalid for Data Type [{1}] at address [{2}]", cell[model.Row, model.Column].Value?.ToString(), model.ValidationModel.DataType?.ToString(), cell.Address);
+                    if (cell[model.Row, model.Column].Value != null)
+                    {
+                        //check if cell value has a value
+                        if (string.IsNullOrWhiteSpace(cell.Value.ToString()) || !model.ValidationModel.TypeIsValid)
+                        {
+                            comment = string.IsNullOrWhiteSpace(cell.Value?.ToString()) ? errorComment 
+                                : comment;
+                            result = SetError(cell, model, comment);
+                        }
+
+                    }
+                    else
+                        result = SetError(cell, model, comment); break;
                 default: break;
             }
-
             return result;
         }
         #endregion
@@ -106,7 +126,7 @@ namespace ExcelValidator.Model
             excelSheet.ColumnIsValid = true;
             foreach (var firstRowCell in sheet.Cells[sheet.Dimension.Start.Row, sheet.Dimension.Start.Column, 1, sheet.Dimension.End.Column])
             {
-                var result = ValidateText(sheet.Cells, excelSheet, 1);
+                var result = ValidateText(sheet.Cells, excelSheet,1);
                 if (!result)
                 {
                     excelSheet.ColumnIsValid = false;
@@ -225,11 +245,16 @@ namespace ExcelValidator.Model
             excelSheet.ColumnIsValid = true;
             foreach (var firstRowCell in sheet.Cells[sheet.Dimension.Start.Row, sheet.Dimension.Start.Column, 1, sheet.Dimension.End.Column])
             {
-                var result = ValidateText(sheet.Cells, excelSheet, 1);
+                var dataColumnKey = excelSheet.DataValidation.Keys.Skip((excelSheet.Column - 1)).Take(1).First();
+                excelSheet.ValidationModel = excelSheet.DataValidation[dataColumnKey];
+                excelSheet.ColumnValidation = "Column_Validation";
+                excelSheet.ValidationModel.CurrentValue = Convert.ToString(sheet.Cells[excelSheet.Row, excelSheet.Column].Value);
+
+                var result = ValidateText(sheet.Cells, excelSheet,1);
                 if (!result)
                 {
                     excelSheet.ColumnIsValid = false;
-                    excelSheet.ErrorComment = $"{CustomErrors.InvalidColumns} at {firstRowCell.Address}";
+                    excelSheet.ErrorComment = $"{CustomErrors.InvalidColumns} at {firstRowCell.Address}\n\n\n";
                 }
                 else
                     columnNames.Add(firstRowCell.Text.ToLower());
@@ -279,6 +304,7 @@ namespace ExcelValidator.Model
             excelSheet.Column = sheet.Dimension.Start.Column;
             excelSheet.EndColumn = sheet.Dimension.End.Column;
             excelSheet.RowIsValid = true;
+            excelSheet.ColumnValidation = "";
             while (excelSheet.Row <= excelSheet.EndRow)
             {
 
@@ -301,7 +327,7 @@ namespace ExcelValidator.Model
                 excelSheet.ValidationModel = excelSheet.DataValidation[dataColumnKey];
                 excelSheet.ValidationModel.CurrentValue = Convert.ToString(sheet.Cells[excelSheet.Row, excelSheet.Column].Value);
 
-                var result =  ValidateText(sheet.Cells, excelSheet,2);
+                var result = ValidateText(sheet.Cells, excelSheet,2);
 
                 if (!result)
                 {
