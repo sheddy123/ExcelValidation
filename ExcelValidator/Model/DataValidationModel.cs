@@ -37,16 +37,20 @@ namespace ExcelValidator.Model
         public string InputType { get; set; }
 
         private string _currentValue;
+        private bool _isValid;
         public string CurrentValue
         {
             get => _currentValue;
             set
             {
-                _currentValue = value;
                 var type = Type.GetType($"System.{_dataType}");
-                _typeIsValid = ((String.IsNullOrEmpty(_currentValue) || (type == null)) ? false : TypeDescriptor.GetConverter(type).IsValid(_currentValue));
+                _currentValue = value;
+                _typeIsValid = ((type == null) ? false : TypeDescriptor.GetConverter(type).IsValid(_currentValue));
+                _isValid = (type == null) ? false : true;
             }
         }
+        public bool IsValid { get => _isValid; }
+      
         #endregion
     }
 }

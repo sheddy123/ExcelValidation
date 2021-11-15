@@ -40,16 +40,16 @@ namespace ExcelValidationTests
             //    var dhh = type.Name;
             //}
             var validator = new ValidateExcelSheet(stubData);
-            //var stream = new System.IO.MemoryStream();
-            //using (var pck = new ExcelPackage(stream))
-            //{
-            //    var wds = pck.Workbook.Worksheets.Add("Worksheets-Name", validator.IsValidFile.UpdatedSheet.Workbook.Worksheets[0]);
-            //    var filepaths = "C:\\Users\\iodom\\source\\repos\\ExcelValidation\\ExcelValidationTests\\Files\\";
-            //    string fullPath = Path.Combine(filepaths, "Dmtest.xlsx");
-            //    FileInfo fi = new FileInfo(fullPath);
-            //    pck.SaveAs(fi);
-            //}
-            Assert.False(validator.IsValidFile.RowIsValid);
+            var stream = new System.IO.MemoryStream();
+            using (var pck = new ExcelPackage(stream))
+            {
+                var wds = pck.Workbook.Worksheets.Add("Worksheets-Name", validator.IsValidFile.UpdatedSheet.Workbook.Worksheets[0]);
+                var filepaths = "C:\\Users\\iodom\\source\\repos\\ExcelValidation\\ExcelValidationTests\\Files\\";
+                string fullPath = Path.Combine(filepaths, $"Dmtest{DateTime.Now.Second}.xlsx");
+                FileInfo fi = new FileInfo(fullPath);
+                pck.SaveAs(fi);
+            }
+            Assert.True(validator.IsValidFile.RowIsValid);
             Assert.True(validator.IsValidFile.ColumnIsValid);
         }
     }
