@@ -36,9 +36,7 @@ Install the ExcelValidator base package:
   # How to use
   
   ```
-function test() {
-  console.log("notice the blank line before this function?");
-}
+
 ```
   
 
