@@ -11,3 +11,4 @@ Data Validation of ExcelSheet, with create, read, modify, delete Data validation
 # Continuous integration
 | Branch | Build Status |
 | :---   | :---:        |          
+| `master` | List all *new or modified* files |
