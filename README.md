@@ -18,3 +18,14 @@ Data Validation of ExcelSheet, with create, read, modify, delete Data validation
 | File Type 	| Container Format |	File Format |	Excel Version(s) |
 | :---        | :---             |  :---        | :---             |
 | .xlsx       |	ZIP, CFB+ZIP     |	OpenXml     |	2007 and newer   |
+
+# Installation
+It is recommended to use NuGet through the VS Package Manager Console Install-Package <package> or using the VS "Manage NuGet Packages..." extension.
+
+Install the ExcelValidator base package: 
+| Console Terminal | Command |  
+| :---             | :---:   |
+| Package Manager  | `Install-Package excel-validator -Version 1.0.0` |
+| .NET Cli         | dotnet add package excel-validator --version 1.0.0 |
+
+
