@@ -26,6 +26,13 @@ Install the ExcelValidator base package:
 | Console Terminal | Command |  
 | :---             | :---:   |
 | Package Manager  | `Install-Package excel-validator -Version 1.0.0` |
-| .NET Cli         | dotnet add package excel-validator --version 1.0.0 |
+| .NET Cli         | `dotnet add package excel-validator --version 1.0.0` |
+| PackageReference | `<PackageReference Include="excel-validator" Version="1.0.0" />`|
+| Paket CLI        | `paket add excel-validator --version 1.0.0` |
+| Script & Interactive | `#r "nuget: excel-validator, 1.0.0"` |
+| Cake                  | // Install excel-validator as a Cake Addin
+`#addin nuget:?package=excel-validator&version=1.0.0`
+// Install excel-validator as a Cake Tool
+`#tool nuget:?package=excel-validator&version=1.0.0` |
 
 
