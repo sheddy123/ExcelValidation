@@ -16,4 +16,5 @@ Data Validation of ExcelSheet, with create, read, modify, delete Data validation
 
 # Supported file formats and versions
 | File Type 	| Container Format |	File Format |	Excel Version(s) |
-| .xlsx |	ZIP, CFB+ZIP |	OpenXml |	2007 and newer|
+| :---        | :---             |  :---        | :---             |
+| .xlsx       |	ZIP, CFB+ZIP     |	OpenXml     |	2007 and newer   |
