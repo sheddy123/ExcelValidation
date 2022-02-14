@@ -12,3 +12,8 @@ Data Validation of ExcelSheet, with create, read, modify, delete Data validation
 | Branch | Build Status |
 | :---   | :---:        |          
 | `master` | [![Build Status](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_apis/build/status/sheddy123.ExcelValidation?branchName=main)](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_build/latest?definitionId=15&branchName=main) |
+
+
+# Supported file formats and versions
+| File Type 	| Container Format |	File Format |	Excel Version(s) |
+| .xlsx |	ZIP, CFB+ZIP |	OpenXml |	2007 and newer|
