@@ -41,7 +41,7 @@ Install the ExcelValidator base package:
         /// </summary>
         /// <param name="excelFile"></param>
         /// <returns></returns>
-        + public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
+        public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
         {
             try
             {
