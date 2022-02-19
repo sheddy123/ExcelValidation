@@ -35,13 +35,13 @@ Install the ExcelValidator base package:
   
   # How to use
   
-  ```
+  ```diff
         /// <summary>
         /// Takes in ExcelValidationModel that validates rows and columns
         /// </summary>
         /// <param name="excelFile"></param>
         /// <returns></returns>
-        public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
+        + public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
         {
             try
             {
