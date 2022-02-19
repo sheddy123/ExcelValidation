@@ -183,7 +183,7 @@ Install the ExcelValidator base package:
 ```c#
  public class DataValidationModel
     {
-        #region PR#7 Data Validation of Excel Rows and Columns
+        #region  Data Validation of Excel Rows and Columns
         private string _dataType;
         public string DataType
         {
