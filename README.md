@@ -34,6 +34,54 @@ Install the ExcelValidator base package:
   
   
   # How to use
+  ```c#
+  There are two methods for validation.
+  - `Data Validation:` The properties are put in a `Dictionary<string, DataValidationModel>` type, where the excel column headers are defined and also a `DataValidationModel` which has `DataType` and `InputType` properties for that excel column.
+  - `Normal Validation`: This take in a `List of string List<string>` where the column names are defined.
+  
+  ```c#
+  private byte[] ReturnFile()
+        {
+            var filepaths = "C:\\source\\repos\\ExcelValidation\\ExcelValidationTests\\Files\\DemoFiles.xlsx";
+            byte[] fileByte = System.IO.File.ReadAllBytes(filepaths);
+            return fileByte;
+        }
+  ```
+  
+  //Decare variable to use and add `Excel Column Headers` to the initialized object.
+  ```c#  
+  private Dictionary<string, DataValidationModel> DataValidationStub()
+        {
+            Dictionary<string, DataValidationModel> stub = new Dictionary<string, DataValidationModel>();
+            stub.Add("ID", new DataValidationModel() { DataType = "int32", InputType = "Text" } );
+            stub.Add("Username", new DataValidationModel() { DataType = "string", InputType = "Text" });
+            stub.Add("Email", new DataValidationModel() { DataType = "string", InputType = "Email" });
+            
+            return stub;
+        }
+  ```
+  
+  ```c#
+  public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] {
+                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "ID","Username","Email" },ValidationType = CustomNames.NormalVal }
+            };
+            
+            yield return new object[] {
+                new ExcelValidationModel { ExcelFile = ReturnFile(), DataValidation = DataValidationStub(), ValidationType = CustomNames.Data_Validation }
+            };
+            
+        }
+  
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+  ```
+  after defining your `ExcelValidationModel`, pass it into the `ValidateExcel` method.
+  
+  ```c#
+  ExcelValidationModel excelValidationResult = new ExcelValidationModel();
+  var result = excelValidationResult.ValidateExcel(excelValidationObj);
+  ```
   
   ```c#
         /// <summary>
