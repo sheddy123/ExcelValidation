@@ -160,8 +160,6 @@ Install the ExcelValidator base package:
                 set
                 {
                     _validationType = value;
-                    //var dataColumnKey = _dataValidation.Keys.Skip((Column - 1)).Take(1).First();
-                    //_validationType = _dataValidation[dataColumnKey];
                 }
             }
 
@@ -175,9 +173,6 @@ Install the ExcelValidator base package:
                 set
                 {
                     _dataValidation = value;
-
-                    //var type = Type.GetType($"System.{Helpers.Helpers.UpperCaseFirst(_dataValidation[dataColumnKey].DataType)}");
-
                 }
             }
             public string ColumnValidation { get; set; }
