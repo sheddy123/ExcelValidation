@@ -36,8 +36,8 @@ Install the ExcelValidator base package:
   # How to use
   ```c#
   There are two methods for validation.
-  - `Data Validation:` The properties are put in a `Dictionary<string, DataValidationModel>` type, where the excel column headers are defined and also a `DataValidationModel` which has `DataType` and `InputType` properties for that excel column.
-  - `Normal Validation`: This take in a `List of string List<string>` where the column names are defined.
+  1. `Data Validation:` The properties are put in a `Dictionary<string, DataValidationModel>` type, where the excel column headers are defined and also a `DataValidationModel` which has `DataType` and `InputType` properties for that excel column.
+  2. `Normal Validation`: This take in a `List of string List<string>` where the column names are defined.
 ```  
   ```c#
   private byte[] ReturnFile()
