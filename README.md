@@ -35,7 +35,7 @@ Install the ExcelValidator base package:
   
   # How to use
   
-  ```diff
+  ```c#
         /// <summary>
         /// Takes in ExcelValidationModel that validates rows and columns
         /// </summary>
