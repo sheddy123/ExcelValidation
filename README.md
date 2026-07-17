@@ -233,6 +233,18 @@ foreach (var error in result.Errors) { /* structured */ }
 
 `InputType` has no equivalent: it was carried on the model but never actually checked against anything. Use `Pattern` or `AllowedValues` for what it implied.
 
+## Try it
+
+`ExcelValidator.Sample` is a runnable tour: it builds a workbook, validates it, prints every kind
+of error, and writes an annotated copy you can open in Excel.
+
+```
+dotnet run --project ExcelValidator.Sample
+```
+
+In Visual Studio, set it as the startup project and press F5. (`ExcelValidator` itself is a class
+library and has no entry point, so it can't be started directly.)
+
 ## Building
 
 ```
