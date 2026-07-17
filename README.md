@@ -127,6 +127,47 @@ Branch on `Kind`, not on `Message` — the wording is meant for humans and may c
 
 Only the error that explains a cell is reported: a value of the wrong type isn't also reported for failing the length and pattern rules it was never going to satisfy.
 
+## Getting the result as JSON
+
+For returning a validation outcome over an HTTP API, logging it, or handing it to a front end,
+serialize the result:
+
+```csharp
+var result = validator.Validate(bytes, schema);
+
+string json = result.ToJson();                 // pretty-printed
+string compact = result.ToJson(indented: false);
+// Or, equivalently: ExcelValidationJson.Serialize(result)
+```
+
+Keys are camelCase and enum values are written as names, so the output stays readable:
+
+```json
+{
+  "isValid": false,
+  "columnsAreValid": true,
+  "rowsAreValid": false,
+  "rowsValidated": 5,
+  "truncated": false,
+  "missingColumns": [],
+  "unexpectedColumns": [],
+  "errors": [
+    {
+      "kind": "typeMismatch",
+      "message": "'N/A' is not a valid Integer value for column 'EmpId'.",
+      "columnName": "EmpId",
+      "address": "A3",
+      "row": 3,
+      "column": 1,
+      "value": "N/A"
+    }
+  ]
+}
+```
+
+Keys whose value is null (the address of a missing column, say) are omitted rather than written as
+`null`.
+
 ## Annotating a workbook
 
 To hand the file back to whoever sent it, with the problems marked in place:
@@ -232,6 +273,18 @@ foreach (var error in result.Errors) { /* structured */ }
 ```
 
 `InputType` has no equivalent: it was carried on the model but never actually checked against anything. Use `Pattern` or `AllowedValues` for what it implied.
+
+## Try it
+
+`ExcelValidator.Sample` is a runnable tour: it builds a workbook, validates it, prints every kind
+of error, and writes an annotated copy you can open in Excel.
+
+```
+dotnet run --project ExcelValidator.Sample
+```
+
+In Visual Studio, set it as the startup project and press F5. (`ExcelValidator` itself is a class
+library and has no entry point, so it can't be started directly.)
 
 ## Building
 
