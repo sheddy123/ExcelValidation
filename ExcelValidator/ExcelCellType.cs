@@ -3,7 +3,6 @@ namespace ExcelValidator
     /// <summary>
     /// The kind of value a column is expected to hold.
     /// </summary>
-    /// <remarks>
     public enum ExcelCellType
     {
         /// <summary>Any value. Every non-empty cell satisfies this type.</summary>
