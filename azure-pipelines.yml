@@ -15,53 +15,62 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  solution: 'ExcelValidator.sln'
-  configuration: 'Release'
+  buildConfiguration: Release
+  solution: ExcelValidator.sln
 
 steps:
-
+# Install .NET 10 SDK
 - task: UseDotNet@2
-  displayName: Install .NET 8 SDK
+  displayName: Install .NET 10 SDK
   inputs:
     packageType: sdk
-    version: '8.0.x'
+    version: '10.0.x'
 
+# Display SDK information (useful for troubleshooting)
 - script: |
     dotnet --info
+    dotnet --list-sdks
     dotnet nuget list source
-  displayName: Environment Information
+  displayName: Display .NET Information
 
+# Restore packages
 - script: |
-    dotnet restore $(solution) --verbosity detailed
+    dotnet restore $(solution)
   displayName: Restore
 
+# Build solution
 - script: |
     dotnet build $(solution) \
-      --configuration $(configuration) \
+      --configuration $(buildConfiguration) \
       --no-restore
   displayName: Build
 
+# Run tests
 - script: |
-    dotnet test \
-      --configuration $(configuration) \
+    dotnet test $(solution) \
+      --configuration $(buildConfiguration) \
       --no-build \
       --collect:"XPlat Code Coverage"
   displayName: Test
 
+# Pack NuGet package
 - script: |
     dotnet pack ExcelValidator/ExcelValidator.csproj \
-      --configuration $(configuration) \
+      --configuration $(buildConfiguration) \
       --no-build \
       --output $(Build.ArtifactStagingDirectory)
   displayName: Pack
 
+# Publish package artifact
 - publish: $(Build.ArtifactStagingDirectory)
   artifact: nupkg
+  displayName: Publish Package Artifact
 
+# Push to NuGet.org on version tags only
 - script: |
     dotnet nuget push "$(Build.ArtifactStagingDirectory)/*.nupkg" \
-      --api-key $(APIKEY) \
+      --api-key "$(APIKEY)" \
       --source https://api.nuget.org/v3/index.json \
       --skip-duplicate
-  displayName: Push to NuGet
+  displayName: Push to NuGet.org
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
