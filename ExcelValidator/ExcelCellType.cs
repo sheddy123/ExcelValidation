@@ -1,5 +1,5 @@
 namespace ExcelValidator
-{
+{ 
     /// <summary>
     /// The kind of value a column is expected to hold.
     /// </summary>
