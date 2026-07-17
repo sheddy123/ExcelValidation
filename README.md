@@ -1,277 +1,246 @@
-# ExcelValidation
+# Excel Validator
 
+[![NuGet](https://img.shields.io/nuget/v/excel-validator?style=flat-square)](https://www.nuget.org/packages/excel-validator)
 [![Build Status](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_apis/build/status/sheddy123.ExcelValidation?branchName=main)](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_build/latest?definitionId=15&branchName=main)
-![Nuget](https://img.shields.io/nuget/v/excel-validator?style=plastic)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[![Board Status](https://dev.azure.com/devopspractices1/edf82c24-f3b4-4b8d-b4d8-c9d8226cdd76/5092ddc7-b118-4e90-ab83-6a0055a75ea7/_apis/work/boardbadge/f8bfb2aa-fa17-49b0-b903-6521b0552c3d?columnOptions=1)](https://dev.azure.com/devopspractices1/edf82c24-f3b4-4b8d-b4d8-c9d8226cdd76/_boards/board/t/5092ddc7-b118-4e90-ab83-6a0055a75ea7/Microsoft.RequirementCategory/)
+Schema validation for `.xlsx` worksheets. Declare the columns you expect and the type each one holds, hand it a workbook, and get back a structured list of what is wrong and exactly where — or an annotated copy of the workbook with the bad cells highlighted for whoever sent it to you.
 
+Built on [ClosedXML](https://github.com/ClosedXML/ClosedXML) (MIT), so there is no commercial licensing restriction to worry about.
 
-Data Validation of ExcelSheet, with create, read, modify, delete Data validations . Types of validations supported: Integer (whole in Excel), Decimal, List, Date, Time, Any and Custom.  Strongly typed interface for each validation type
+```csharp
+using ExcelValidator;
 
-# Continuous integration
-| Branch | Build Status |
-| :---   | :---:        |          
-| `main` | [![Build Status](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_apis/build/status/sheddy123.ExcelValidation?branchName=main)](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_build/latest?definitionId=15&branchName=main) |
+var schema = new ExcelSchema()
+    .Column("ID", ExcelCellType.Integer)
+    .Column("Username", ExcelCellType.Text, maxLength: 50)
+    .Column("Email", ExcelCellType.Text, pattern: @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
+var result = new ExcelSheetValidator().Validate(File.ReadAllBytes("people.xlsx"), schema);
 
-# Supported file formats and versions
-| File Type 	| Container Format |	File Format |	Excel Version(s) |
-| :---        | :---             |  :---        | :---             |
-| .xlsx       |	ZIP, CFB+ZIP     |	OpenXml     |	2007 and newer   |
-
-# Installation
-It is recommended to use NuGet through the VS Package Manager Console Install-Package <package> or using the VS "Manage NuGet Packages..." extension.
-
-Install the ExcelValidator base package: 
-| Console Terminal | Command |  
-| :---             | :---:   |
-| Package Manager  | `Install-Package excel-validator -Version 1.0.0` |
-| .NET Cli         | `dotnet add package excel-validator --version 1.0.0` |
-| PackageReference | `<PackageReference Include="excel-validator" Version="1.0.0" />`| 
-| Paket CLI        | `paket add excel-validator --version 1.0.0` |
-| Script & Interactive | `#r "nuget: excel-validator, 1.0.0"` |
-| Cake                  | // Install excel-validator as a Cake Addin `#addin nuget:?package=excel-validator&version=1.0.0` // Install excel-validator as a Cake Tool `#tool nuget:?package=excel-validator&version=1.0.0` |
-  
-  
-  # How to use
-  ```c#
-  There are two methods for validation.
-  1. `Data Validation:` The properties are put in a `Dictionary<string, DataValidationModel>` type, where the excel column headers are defined and also a `DataValidationModel` which has `DataType` and `InputType` properties for that excel column.
-  2. `Normal Validation`: This take in a `List of string List<string>` where the column names are defined.
-```  
-  ```c#
-  private byte[] ReturnFile()
-        {
-            var filepaths = "C:\\source\\repos\\ExcelValidation\\ExcelValidationTests\\Files\\DemoFiles.xlsx";
-            byte[] fileByte = System.IO.File.ReadAllBytes(filepaths);
-            return fileByte;
-        }
-  ```
-  
-  //Decare variable to use and add `Excel Column Headers` to the initialized object.
-  ```c#  
-  private Dictionary<string, DataValidationModel> DataValidationStub()
-        {
-            Dictionary<string, DataValidationModel> stub = new Dictionary<string, DataValidationModel>();
-            stub.Add("ID", new DataValidationModel() { DataType = "int32", InputType = "Text" } );
-            stub.Add("Username", new DataValidationModel() { DataType = "string", InputType = "Text" });
-            stub.Add("Email", new DataValidationModel() { DataType = "string", InputType = "Email" });
-            
-            return stub;
-        }
-  ```
-  
-  ```c#
-  public IEnumerator<object[]> GetEnumerator()
-        {
-            yield return new object[] {
-                new ExcelValidationModel { ExcelFile = ReturnFile(), HeaderColumns = new List<string>(){ "ID","Username","Email" },ValidationType = CustomNames.NormalVal }
-            };
-            
-            yield return new object[] {
-                new ExcelValidationModel { ExcelFile = ReturnFile(), DataValidation = DataValidationStub(), ValidationType = CustomNames.Data_Validation }
-            };
-            
-        }
-  
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-  ```
-  after defining your `ExcelValidationModel`, pass it into the `ValidateExcel` method.
-  
-  ```c#
-  ExcelValidationModel excelValidationResult = new ExcelValidationModel();
-  var result = excelValidationResult.ValidateExcel(excelValidationObj);
-  ```
-  
-  ```c#
-        /// <summary>
-        /// Takes in ExcelValidationModel that validates rows and columns
-        /// </summary>
-        /// <param name="excelFile"></param>
-        /// <returns></returns>
-        public ExcelValidationModel ValidateExcel(ExcelValidationModel excelFile)
-        {
-            try
-            {
-                switch (excelFile.ValidationType)
-                {
-                    case CustomNames.NormalVal:
-                        //Validates the column(s)
-                        excelFile.ColumnIsValid = ValidationMethods.ValidateExcelColumns(excelFile);
-                        //Validates the row(s)
-                        excelFile.RowIsValid = ValidationMethods.ValidateExcelRows(excelFile); break;
-                    case CustomNames.Data_Validation:
-                        excelFile.DataValidation = (Dictionary<string, DataValidationModel>)excelFile.DataValidation;
-                        //Validates the column(s)
-                        excelFile.ColumnIsValid = ValidationMethods.DataValidateExcelColumns(excelFile);
-                        //Validates the row(s)
-                        excelFile.RowIsValid = ValidationMethods.DataTypeValidateExcelRows(excelFile); break;
-                    default: break;
-                }
-                return excelFile;
-            }
-            catch (Exception ex)
-            {
-                return new ExcelValidationModel { ErrorComment = ex.Message };
-            }
-        }
-```
-# `MODELS`
-- `ExcelValidationModel:` This object contains properties used for validating the excel file. Snippet of `ExcelValidationModel`
-
-```c#        
-    public class ExcelValidationModel
-        {
-            public string ColumnName { get; }
-
-            public ExcelWorksheet UpdatedSheet { get; set; }
-
-            private List<HashSet<string>> _addRowEntriesList = new List<HashSet<string>>();
-
-            public List<HashSet<string>> AddRowEntriesList
-            {
-                get => _addRowEntriesList;
-                set
-                {
-                    _addRowEntriesList = value;
-                }
-            }
-
-
-            public int Row { get; set; }
-
-            public int Column { get; set; }
-
-            public string Comment { get; set; }
-
-            private bool _isValidRow;
-
-            private bool _isValidColumn;
-
-            private string _errorComment;
-
-            public bool RowIsValid
-            {
-                get => _isValidRow;
-                set
-                {
-                    _isValidRow = value;
-                }
-            }
-
-            public bool ColumnIsValid
-            {
-                get => _isValidColumn;
-                set
-                {
-                    _isValidColumn = value;
-                }
-            }
-
-            public int EndRow { get; set; }
-
-            public int EndColumn { get; set; }
-
-            public string ErrorComment
-            {
-                get => _errorComment;
-                set
-                {
-                    _errorComment += value;
-                    
-                }
-            }
-
-            public byte[] ExcelFile { get; set; }
-
-            private List<string> _headerColumns;
-
-            public List<string> HeaderColumns
-            {
-                get => _headerColumns;
-                set
-                {
-                    _headerColumns = value;
-                    _headerColumns = _headerColumns.ConvertAll(x => x.ToLowerInvariant());
-                }
-            }
-
-            private string _mismatchedRows;
-
-            public string MismatchedColumns { get => _mismatchedRows; set { _mismatchedRows = value; } }
-            
-            private DataValidationModel _validationType;
-            public DataValidationModel ValidationModel
-            {
-                get => _validationType; 
-                set
-                {
-                    _validationType = value;
-                }
-            }
-
-            private string _typeValidate;
-            public string ValidationType { get => _typeValidate; set => _typeValidate = value; }
-
-            private Dictionary<string, DataValidationModel> _dataValidation;
-            public Dictionary<string, DataValidationModel> DataValidation
-            {
-                get => _dataValidation;
-                set
-                {
-                    _dataValidation = value;
-                }
-            }
-            public string ColumnValidation { get; set; }
-            #endregion
-        }
-    
-```
-`DataValidationModel`
-```c#
- public class DataValidationModel
+if (!result.IsValid)
+{
+    foreach (var error in result.Errors)
     {
-        #region  Data Validation of Excel Rows and Columns
-        private string _dataType;
-        public string DataType
-        {
-            get => _dataType;
-            set
-            {
-                _dataType = value;
-                _dataType = Helpers.Helpers.UpperCaseFirst(_dataType);
-            }
-        }
-        private bool _typeIsValid;
-        public bool TypeIsValid
-        {
-            get => _typeIsValid;
-            set => _typeIsValid = value;
-
-        }
-        public string MaxLength { get; set; }
-        public string MinLength { get; set; }
-        public string InputType { get; set; }
-
-        private string _currentValue;
-        private bool _isValid;
-        public string CurrentValue
-        {
-            get => _currentValue;
-            set
-            {
-                var type = Type.GetType($"System.{_dataType}");
-                _currentValue = value;
-                _typeIsValid = ((type == null) ? false : TypeDescriptor.GetConverter(type).IsValid(_currentValue));
-                _isValid = (type == null) ? false : true;
-            }
-        }
-        public bool IsValid { get => _isValid; }
-      
-        #endregion
+        Console.WriteLine(error);   // B4: 'Username' is required but the cell is empty.
     }
+}
+```
+
+## Install
 
 ```
-- `ValidateExcel:` This method takes in an `ExcelValidationModel` object as parameter.  
+dotnet add package excel-validator
+```
 
+Targets `netstandard2.0` and `net8.0`, so it runs on .NET Framework 4.6.1+, .NET Core 2.0+, and all modern .NET.
 
+| File type | Format  | Excel version  |
+| :-------- | :------ | :------------- |
+| `.xlsx`   | OpenXML | 2007 and newer |
+
+The legacy `.xls` format is not supported.
+
+## Defining a schema
+
+Each column gets a name, a type, and optionally some constraints:
+
+```csharp
+var schema = new ExcelSchema()
+    .Column("ID", ExcelCellType.Integer)
+    .Column("Signed up", ExcelCellType.DateTime)
+    .Column("Notes", ExcelCellType.Text, required: false)
+    .Column("Status", allowedValues: new[] { "Active", "Pending" })
+    .Column("Code", ExcelCellType.Text, minLength: 3, maxLength: 10);
+```
+
+If you only care that the headers line up, skip the types:
+
+```csharp
+var schema = ExcelSchema.FromHeaders("ID", "Username", "Email");
+```
+
+By default a column the schema doesn't declare is an error. To ignore extra columns:
+
+```csharp
+schema.AllowUnexpectedColumns = true;
+```
+
+### Column types
+
+| `ExcelCellType` | Accepts |
+| :-------------- | :------ |
+| `Text`          | any non-empty value |
+| `Integer`       | a whole number within `int` range |
+| `Long`          | a whole number within `long` range |
+| `Decimal`       | a number within `decimal` range |
+| `Double`        | a number within `double` range |
+| `Boolean`       | an Excel boolean, or the text `true`/`false` |
+| `DateTime`      | an Excel date, or a parseable date string |
+| `Guid`          | anything `Guid.TryParse` accepts |
+
+A cell satisfies its type whether Excel stored the value natively or as text — a cell holding the number `34` and one holding the string `"34"` both satisfy `Integer`, since which one a file uses depends on the tool that wrote it rather than on whether the data is right. Text is parsed with the invariant culture, so results don't change with the server's locale.
+
+## Reading the result
+
+`Validate` does not throw on invalid *data* — it returns what it found. It throws only when the file itself can't be read; see [Errors vs exceptions](#errors-vs-exceptions).
+
+```csharp
+result.IsValid            // true when Errors is empty
+result.Errors             // every problem, header errors first, then row by row
+result.MissingColumns     // schema columns absent from the sheet
+result.UnexpectedColumns  // sheet columns absent from the schema
+result.RowsValidated      // data rows examined, blank rows excluded
+result.ColumnsAreValid    // the header row alone
+result.RowsAreValid       // the data cells alone
+result.Truncated          // whether MaxErrors cut the list short
+```
+
+Each `ValidationError` locates itself as precisely as the problem allows:
+
+```csharp
+foreach (var error in result.Errors)
+{
+    error.Kind;        // ValidationErrorKind.TypeMismatch
+    error.Message;     // "'abc' is not a valid Integer value for column 'ID'."
+    error.ColumnName;  // "ID"
+    error.Address;     // "A4"   (null for a column that's missing entirely)
+    error.Row;         // 4
+    error.Column;      // 1
+    error.Value;       // "abc"
+}
+```
+
+Branch on `Kind`, not on `Message` — the wording is meant for humans and may change between releases.
+
+| `ValidationErrorKind`  | Meaning |
+| :--------------------- | :------ |
+| `MissingColumn`        | the schema declares a column the sheet doesn't have |
+| `UnexpectedColumn`     | the sheet has a column the schema doesn't declare |
+| `DuplicateColumn`      | the same header appears twice |
+| `EmptyHeader`          | a header cell is blank |
+| `RequiredValueMissing` | a required cell is empty |
+| `TypeMismatch`         | the value isn't readable as the column's type |
+| `LengthOutOfRange`     | the text is shorter or longer than allowed |
+| `ValueNotAllowed`      | the value isn't in `AllowedValues` |
+| `PatternMismatch`      | the value doesn't match `Pattern` |
+
+Only the error that explains a cell is reported: a value of the wrong type isn't also reported for failing the length and pattern rules it was never going to satisfy.
+
+## Annotating a workbook
+
+To hand the file back to whoever sent it, with the problems marked in place:
+
+```csharp
+var result = validator.Validate(bytes, schema);
+
+if (!result.IsValid)
+{
+    byte[] annotated = validator.Annotate(bytes, result);
+    File.WriteAllBytes("people-errors.xlsx", annotated);
+}
+```
+
+Every offending cell is filled red and given a comment explaining the problem. Your input array is not modified. Column-level errors land on the header cell, except for a column that's missing entirely, which has no cell to mark.
+
+## Options
+
+```csharp
+var options = new ExcelValidationOptions
+{
+    WorksheetName = "Data",       // by name; otherwise WorksheetPosition (1-based, default 1)
+    HeaderRow = 3,                // when the sheet has a title block above the table
+    CaseSensitiveHeaders = true,  // default false
+    TrimValues = false,           // default true; when true, a cell of spaces counts as empty
+    MaxErrors = 100,              // default 1000; stop early and set result.Truncated
+};
+
+var result = validator.Validate(bytes, schema, options);
+```
+
+`MaxErrors` exists so a wholly malformed 100k-row import can't allocate an error per cell. Set it to `int.MaxValue` to collect everything.
+
+## Errors vs exceptions
+
+Invalid data is a **result**, not an exception — that's the normal case this library exists to report on. `ExcelValidationException` is thrown only when there's nothing to validate: the bytes aren't an `.xlsx` file, the file is corrupt or password-protected, or the requested worksheet doesn't exist.
+
+```csharp
+try
+{
+    var result = validator.Validate(bytes, schema);
+    // inspect result.Errors
+}
+catch (ExcelValidationException ex)
+{
+    // the file itself couldn't be read
+}
+```
+
+## Dependency injection
+
+`ExcelSheetValidator` is stateless and thread-safe, so register it once:
+
+```csharp
+services.AddSingleton<IExcelSheetValidator, ExcelSheetValidator>();
+```
+
+## Migrating from 1.x
+
+Version 2.0 is a clean break. The 1.x API is gone rather than deprecated, because the two things that most needed fixing — the EPPlus non-commercial licence and the mutable per-call state — were both baked into its shape.
+
+**Why the rewrite:** 1.x ran on EPPlus 5, which is licensed [Polyform Noncommercial](https://polyformproject.org/licenses/noncommercial/1.0.0/), and it set `LicenseContext = NonCommercial` on your behalf. Anyone using `excel-validator` 1.x in a commercial product was relying on a licence they never agreed to and likely didn't qualify for. 2.0 runs on ClosedXML under MIT, so the question doesn't arise.
+
+What changed:
+
+| 1.x | 2.0 |
+| :-- | :-- |
+| `new ValidateExcelSheet(model)`, read `.IsValidFile` | `validator.Validate(bytes, schema)` returns the result |
+| `ExcelValidationModel` as both input and output | `ExcelSchema` in, `ExcelValidationResult` out |
+| `ValidationType = "Normal"` / `"Data Validation"` | one `Validate` method; the schema says what to check |
+| `DataType = "int32"` (string, resolved by reflection) | `ExcelCellType.Integer` (enum, checked at compile time) |
+| `ErrorComment`, one concatenated string | `Errors`, a list with `Kind`, `Address`, `Row`, `Column`, `Value` |
+| Sheet mutated in place, returned via `UpdatedSheet` | `Annotate(bytes, result)` returns a new workbook |
+| Exceptions swallowed into `ErrorComment` | unreadable files throw `ExcelValidationException` |
+
+Before:
+
+```csharp
+var model = new ExcelValidationModel
+{
+    ExcelFile = bytes,
+    DataValidation = new Dictionary<string, DataValidationModel>
+    {
+        { "ID", new DataValidationModel { DataType = "int32", InputType = "Text" } },
+        { "Email", new DataValidationModel { DataType = "string", InputType = "Email" } },
+    },
+    ValidationType = CustomNames.Data_Validation,
+};
+
+var validator = new ValidateExcelSheet(model);
+if (!validator.IsValidFile.RowIsValid) { /* parse ErrorComment */ }
+```
+
+After:
+
+```csharp
+var schema = new ExcelSchema()
+    .Column("ID", ExcelCellType.Integer)
+    .Column("Email", ExcelCellType.Text, pattern: @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+var result = new ExcelSheetValidator().Validate(bytes, schema);
+foreach (var error in result.Errors) { /* structured */ }
+```
+
+`InputType` has no equivalent: it was carried on the model but never actually checked against anything. Use `Pattern` or `AllowedValues` for what it implied.
+
+## Building
+
+```
+dotnet build
+dotnet test
+dotnet pack -c Release
+```
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
