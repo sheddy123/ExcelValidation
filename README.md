@@ -4,7 +4,7 @@
 [![Build Status](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_apis/build/status/sheddy123.ExcelValidation?branchName=main)](https://dev.azure.com/devopspractices1/Space%20Game%20-%20web%20-%20Tests/_build/latest?definitionId=15&branchName=main)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-Schema validation for `.xlsx` worksheets. Declare the columns you expect and the type each one holds, hand it a workbook, and get back a structured list of what is wrong and exactly where — or an annotated copy of the workbook with the bad cells highlighted for whoever sent it to you.
+Schema validation for `.xlsx` worksheets. Declare the columns you expect and the type each one holds, hand it a workbook, and get back a structured list of what is wrong and exactly where, or an annotated copy of the workbook with the bad cells highlighted for whoever sent it to you.
 
 Built on [ClosedXML](https://github.com/ClosedXML/ClosedXML) (MIT), so there is no commercial licensing restriction to worry about.
 
