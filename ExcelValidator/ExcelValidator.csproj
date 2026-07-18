@@ -13,7 +13,7 @@
 
   <PropertyGroup Label="Package metadata">
     <PackageId>excel-validator</PackageId>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>Odom Ifeanyi Shadrach</Authors>
     <Company>Odom Ifeanyi Shadrach</Company>
     <Title>Excel Validator</Title>
@@ -25,7 +25,8 @@
     <RepositoryUrl>https://github.com/sheddy123/ExcelValidation</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright (c) Odom Ifeanyi Shadrach</Copyright>
-    <PackageReleaseNotes>2.1.0 — Add JSON serialization: result.ToJson() and ExcelValidationJson.Serialize(result) render an ExcelValidationResult as JSON (camelCase, enum names as strings). Adds a net10.0 target. No breaking changes from 2.0.
+    <PackageReleaseNotes>2.1.1 — Documentation only. README wording corrections. No code changes from 2.1.0.
+2.1.0 — Add JSON serialization: result.ToJson() and ExcelValidationJson.Serialize(result) render an ExcelValidationResult as JSON (camelCase, enum names as strings). Adds a net10.0 target. No breaking changes from 2.0.
 2.0.0 — Rewritten on ClosedXML (MIT), removing the EPPlus non-commercial licensing restriction. New schema-based API with structured errors. Targets netstandard2.0 and net8.0. See the README for a migration guide from 1.x.</PackageReleaseNotes>
   </PropertyGroup>
 
