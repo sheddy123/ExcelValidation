@@ -79,11 +79,11 @@ schema.AllowUnexpectedColumns = true;
 | `DateTime`      | an Excel date, or a parseable date string |
 | `Guid`          | anything `Guid.TryParse` accepts |
 
-A cell satisfies its type whether Excel stored the value natively or as text — a cell holding the number `34` and one holding the string `"34"` both satisfy `Integer`, since which one a file uses depends on the tool that wrote it rather than on whether the data is right. Text is parsed with the invariant culture, so results don't change with the server's locale.
+A cell satisfies its type whether Excel stored the value natively or as text a cell holding the number `34` and one holding the string `"34"` both satisfy `Integer`, since which one a file uses depends on the tool that wrote it rather than on whether the data is right. Text is parsed with the invariant culture, so results don't change with the server's locale.
 
 ## Reading the result
 
-`Validate` does not throw on invalid *data* — it returns what it found. It throws only when the file itself can't be read; see [Errors vs exceptions](#errors-vs-exceptions).
+`Validate` does not throw on invalid *data* it returns what it found. It throws only when the file itself can't be read; see [Errors vs exceptions](#errors-vs-exceptions).
 
 ```csharp
 result.IsValid            // true when Errors is empty
@@ -111,7 +111,7 @@ foreach (var error in result.Errors)
 }
 ```
 
-Branch on `Kind`, not on `Message` — the wording is meant for humans and may change between releases.
+Branch on `Kind`, not on `Message` the wording is meant for humans and may change between releases.
 
 | `ValidationErrorKind`  | Meaning |
 | :--------------------- | :------ |
@@ -203,7 +203,7 @@ var result = validator.Validate(bytes, schema, options);
 
 ## Errors vs exceptions
 
-Invalid data is a **result**, not an exception — that's the normal case this library exists to report on. `ExcelValidationException` is thrown only when there's nothing to validate: the bytes aren't an `.xlsx` file, the file is corrupt or password-protected, or the requested worksheet doesn't exist.
+Invalid data is a **result**, not an exception that's the normal case this library exists to report on. `ExcelValidationException` is thrown only when there's nothing to validate: the bytes aren't an `.xlsx` file, the file is corrupt or password-protected, or the requested worksheet doesn't exist.
 
 ```csharp
 try
@@ -227,7 +227,7 @@ services.AddSingleton<IExcelSheetValidator, ExcelSheetValidator>();
 
 ## Migrating from 1.x
 
-Version 2.0 is a clean break. The 1.x API is gone rather than deprecated, because the two things that most needed fixing — the EPPlus non-commercial licence and the mutable per-call state — were both baked into its shape.
+Version 2.0 is a clean break. The 1.x API is gone rather than deprecated, because the two things that most needed fixing the EPPlus non-commercial licence and the mutable per-call state were both baked into its shape.
 
 **Why the rewrite:** 1.x ran on EPPlus 5, which is licensed [Polyform Noncommercial](https://polyformproject.org/licenses/noncommercial/1.0.0/), and it set `LicenseContext = NonCommercial` on your behalf. Anyone using `excel-validator` 1.x in a commercial product was relying on a licence they never agreed to and likely didn't qualify for. 2.0 runs on ClosedXML under MIT, so the question doesn't arise.
 
